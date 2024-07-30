@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
+const Role=["Driver","Customer"]
 
 const userSchema=new mongoose.Schema({
     firstName:{
@@ -32,8 +34,8 @@ const userSchema=new mongoose.Schema({
     role:{
         type:String,
         enum:{
-            values:["Driver","Customer"],
-            message:'{VALUE} is not supported'
+            values:Role,
+            message:'{VALUE} is not supported as role'
         },
         required:[true,"User role is required!"]
     },
@@ -42,7 +44,19 @@ const userSchema=new mongoose.Schema({
         min:[6,'must be a least 6, got {VALUE}'],
         max:16,
         required:true
+    },
+    vehicle:{
+        type:Schema.Types.ObjectId,
+        require:isDriver
     }
 })
+
+function isDriver(){
+    if(Role.indexOf('Driver')>-1){
+        return true
+    }else{
+        return false
+    }
+}
 
 export default mongoose.model('user',userSchema)
